@@ -1,22 +1,41 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import Chart from '../components/chart';
+import GoogleMap from './../components/google_map';
 
 class WeatherList extends Component{
+
   renderWeather(cityData){
     const temps = cityData.list.map(weather=> weather.main.temp);
     const pressures = cityData.list.map(weather => weather.main.pressure);
     const humidities = cityData.list.map(weather => weather.main.humidity);
 
+
+    // ES6 Destructuring
+    // This is equivalent to
+    // const lon = cityData.city.coord.lon;
+    // &
+    // const lon = cityData.city.coord.lat;
+    const {lon, lat} = cityData.city.coord;
+
     return(
       //Key has to be unique
       <tr key={cityData.city.name}>
-        <td>{cityData.city.name}</td>
-        <td><Chart data={temps} color="orange" units="K"/></td>
-        <td><Chart data={pressures} color="green" units="hPa"/></td>
-        <td><Chart data={humidities} color="black" units="%"/></td>
+        <td>
+          <GoogleMap lon={lon} lat={lat}/>
+        </td>
+        // Making the chart a reusable component
+        <td>
+          <Chart data={temps} color="orange" units="K"/>
+        </td>
+        <td>
+          <Chart data={pressures} color="green" units="hPa"/>
+        </td>
+        <td>
+          <Chart data={humidities} color="black" units="%"/>
+        </td>
       </tr>
-    )
+    );
   }
 
   render(){
@@ -42,7 +61,7 @@ class WeatherList extends Component{
 function mapStateToProps({weather}){
   return {
     weather
-  }; // {weather} === {weather : weather}
+  }; // this is equivalent to {weather} === {weather : weather}
 }
 
 export default connect(mapStateToProps)(WeatherList);
